@@ -1,3 +1,3 @@
 # TheOneWhoPunches
 
-Kalinkov George 
+Mirror test project
