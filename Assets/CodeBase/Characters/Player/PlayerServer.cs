@@ -34,10 +34,8 @@ namespace CodeBase.Characters.Player
         private void OnDestroy() => 
             _triggerCollideServerDetector.OnCollisionEntered -= HandleCollision;
 
-        public void LoadDataFromServer(PlayerData playerData, int id, string playerName)
+        public void LoadDataFromServer(int id, string playerName)
         {
-            _mover.LoadData(playerData.Speed, playerData.DashDistance, playerData.DashSpeedModifier);
-            _invulnerability.LoadData(playerData.PlayerInvincibleTime);
             _playerName = playerName;
             _id = id;
         }
@@ -72,6 +70,7 @@ namespace CodeBase.Characters.Player
 
             if (collidedPlayer.TryAttackThisPlayer())
                 AddScore();
+            
         }
 
         private void AddScore()

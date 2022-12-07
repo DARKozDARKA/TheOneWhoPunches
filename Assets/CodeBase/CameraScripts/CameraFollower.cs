@@ -1,6 +1,5 @@
 using CodeBase.Infrastructure;
 using CodeBase.Services.InputHandler;
-using CodeBase.StaticData.Strings;
 using CodeBase.StaticData.Values;
 using CodeBase.Tools;
 using UnityEngine;
@@ -34,9 +33,10 @@ namespace CodeBase.CameraScripts
             _rotationX += _inputService.GetMouseX() * GameConstants.MouseRotateSpeed;
             _rotationY += -_inputService.GetMouseY() * GameConstants.MouseRotateSpeed;
 
-            MathTool.LimitValueInBoundries(ref _rotationY,
-                GameConstants.MinVerticalCameraAngle,
-                GameConstants.MaxVerticalCameratAngle);
+            MathTool.LimitValueInBoundries(
+                value: ref _rotationY,
+                minValue: GameConstants.MinVerticalCameraAngle,
+                maxValue: GameConstants.MaxVerticalCameratAngle);
         }
 
         private void LateUpdate()
@@ -45,7 +45,7 @@ namespace CodeBase.CameraScripts
                 return;
 
             var direction = new Vector3(0, 0, -_distanceBetweenCameraAndTarget);
-            var rotation = Quaternion.Euler(_rotationY, _rotationX, 0);
+            Quaternion rotation = Quaternion.Euler(_rotationY, _rotationX, 0);
 
             _cameraRotation = Quaternion.Slerp(_cameraRotation, rotation, GameConstants.SlerpValue);
 
@@ -60,7 +60,7 @@ namespace CodeBase.CameraScripts
             _target = target;
             _isTargetSet = true;
 
-            var position = target.transform.position;
+            Vector3 position = target.transform.position;
             transform.position = position + GameConstants.CameraOffset;
 
             _distanceBetweenCameraAndTarget = Vector3.Distance(transform.position, position);

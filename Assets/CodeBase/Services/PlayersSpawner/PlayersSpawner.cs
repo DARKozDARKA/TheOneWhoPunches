@@ -39,7 +39,7 @@ namespace CodeBase.Services.PlayersSpawner
         public void SpawnPlayerOnServer(NetworkConnection conn, string playerName)
         {
             PlayerServer player = _prefabFactory.CreatePlayer(GetRandomPoint());
-            player.LoadDataFromServer(_staticDataProvider.GetPlayerData(), conn.connectionId, playerName);
+            player.LoadDataFromServer(conn.connectionId, playerName);
             OnPlayerCreated?.Invoke(player);
             _players.Add(player.gameObject);
         

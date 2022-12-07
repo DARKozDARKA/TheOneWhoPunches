@@ -1,5 +1,6 @@
 ﻿using System;
 using CodeBase.Services.InputHandler;
+using CodeBase.StaticData.ScriptableObjects;
 using CodeBase.StaticData.Values;
 using CodeBase.Tools;
 using Mirror;
@@ -7,7 +8,7 @@ using UnityEngine;
 
 namespace CodeBase.Characters.Player
 {
-    public class PlayerMover : NetworkBehaviour
+    public class PlayerMover : NetworkBehaviour, IRequestPlayerData
     {
         [SerializeField]
         private CharacterController _characterController;
@@ -39,11 +40,11 @@ namespace CodeBase.Characters.Player
             _camera = camera;
         }
 
-        public void LoadData(float speed, float dashDistance, float dashSpeedModifier)
+        public void LoadPlayerData(PlayerData playerData)
         {
-            _speed = speed;
-            _dashDistance = dashDistance;
-            _dashSpeedModifier = dashSpeedModifier;
+            _speed = playerData.Speed;
+            _dashDistance = playerData.DashDistance;
+            _dashSpeedModifier = playerData.DashSpeedModifier;
         }
 
 
