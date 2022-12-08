@@ -1,22 +1,25 @@
-using CodeBase.Infrastructure;
+using CodeBase.Infrastructure.ServiceLocator;
 using CodeBase.Services.ApplicationRunner;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class LeaveButton : MonoBehaviour
+namespace CodeBase.UI
 {
-    [SerializeField]
-    private Button _button;
+    public class LeaveButton : MonoBehaviour
+    {
+        [SerializeField]
+        private Button _button;
 
-    private IApplicationRunner _applicationRunner;
+        private IApplicationRunner _applicationRunner;
 
-    private void Awake() =>
-        _applicationRunner = AllServices.Container.Single<IApplicationRunner>();
+        private void Awake() =>
+            _applicationRunner = AllServices.Container.Single<IApplicationRunner>();
 
-    private void OnEnable() => 
-        _button.onClick.AddListener(Leave);
+        private void OnEnable() => 
+            _button.onClick.AddListener(Leave);
 
-    private void Leave() =>
-        _applicationRunner.Quit();
+        private void Leave() =>
+            _applicationRunner.Quit();
 
+    }
 }

@@ -1,4 +1,4 @@
-using CodeBase.Infrastructure;
+using CodeBase.Infrastructure.ServiceLocator;
 using CodeBase.Services.InputHandler;
 using CodeBase.StaticData.Values;
 using CodeBase.Tools;

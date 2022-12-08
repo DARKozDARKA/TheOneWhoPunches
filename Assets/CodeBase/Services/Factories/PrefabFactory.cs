@@ -1,6 +1,8 @@
 ﻿using System.Linq;
 using CodeBase.Characters.Player;
-using CodeBase.Infrastructure;
+using CodeBase.Characters.Player.Logic;
+using CodeBase.Characters.Player.Presenter;
+using CodeBase.Infrastructure.ServiceLocator;
 using CodeBase.Services.AssetManagement;
 using CodeBase.Services.StaticData;
 using CodeBase.StaticData.ScriptableObjects;
@@ -21,17 +23,17 @@ namespace CodeBase.Services.Factories
             _staticDataProvider = allServices.Single<IStaticDataProvider>();
         }
 
-        public PlayerServer CreatePlayer(Vector3 at)
+        public GameObject CreatePlayer(PlayerServerData data, Vector3 at)
         {
             return Object.Instantiate(_assetProvider.Load<GameObject>(PrefabsPath.Player), at, Quaternion.identity)
                 .With(LoadPlayerDataIntoGameObject)
-                .GetComponent<PlayerServer>();
+                .With(_ => _.GetComponent<PlayerIdentity>().LoadData(data));
         }
 
         private void LoadPlayerDataIntoGameObject(GameObject gameObject)
         {
             PlayerData playerData = _staticDataProvider.GetPlayerData();
-            gameObject.GetComponentsInChildren<IRequestPlayerData>()
+            gameObject.GetComponents<IRequestPlayerData>()
                 .ToList()
                 .ForEach(component => component.LoadPlayerData(playerData));
         }

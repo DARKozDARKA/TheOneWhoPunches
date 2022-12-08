@@ -1,4 +1,4 @@
-﻿using CodeBase.Infrastructure;
+﻿using CodeBase.Infrastructure.ServiceLocator;
 using UnityEngine;
 
 namespace CodeBase.Services.AssetManagement

@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using CodeBase.Infrastructure;
+using CodeBase.Infrastructure.ServiceLocator;
 using Mirror;
 
 namespace CodeBase.Networking
@@ -9,6 +9,8 @@ namespace CodeBase.Networking
     {
         public Action OnClientConnected;
         public Action OnClientStop;
+
+        public Action<NetworkConnectionToClient> OnServerDisconnected;
         public List<NetworkConnectionToClient> ConnectionToClients { get; } = new();
 
         public override void OnServerConnect(NetworkConnectionToClient conn)
@@ -20,6 +22,7 @@ namespace CodeBase.Networking
         public override void OnServerDisconnect(NetworkConnectionToClient conn)
         {
             base.OnServerDisconnect(conn);
+            OnServerDisconnected?.Invoke(conn);
             ConnectionToClients.Remove(conn);
         }
 

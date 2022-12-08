@@ -1,4 +1,4 @@
-using CodeBase.Infrastructure;
+using CodeBase.Infrastructure.ServiceLocator;
 using CodeBase.StaticData.ScriptableObjects;
 
 namespace CodeBase.Services.StaticData

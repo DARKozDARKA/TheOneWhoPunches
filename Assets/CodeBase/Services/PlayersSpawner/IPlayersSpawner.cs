@@ -1,16 +1,15 @@
-﻿using System;
-using CodeBase.Characters.Player;
-using CodeBase.Networking.Messages;
+﻿using CodeBase.Networking.Messages;
+using CodeBase.Services.Factories;
 using Mirror;
 
 namespace CodeBase.Services.PlayersSpawner
 {
     public interface IPlayersSpawner
     {
-        void SpawnPlayerOnServer(NetworkConnection conn, string playerName);
+        void SpawnPlayerOnServer(NetworkConnection conn, PlayerServerData data);
         void ConstructPlayerOnClient(SendToClientNewPlayer message);
-        void SetLevelPoints();
-        Action<PlayerServer> OnPlayerCreated { get; set; }
+        void LoadLevelPoints();
         void DestroyAllPlayers();
+        void RemovePlayer(NetworkConnectionToClient conn);
     }
 }

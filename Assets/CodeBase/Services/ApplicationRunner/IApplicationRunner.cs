@@ -1,5 +1,5 @@
 ﻿using System;
-using CodeBase.Infrastructure;
+using CodeBase.Infrastructure.ServiceLocator;
 
 namespace CodeBase.Services.ApplicationRunner
 {

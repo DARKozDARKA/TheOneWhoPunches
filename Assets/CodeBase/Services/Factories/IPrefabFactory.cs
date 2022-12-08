@@ -1,11 +1,10 @@
-﻿using CodeBase.Characters.Player;
-using CodeBase.Infrastructure;
+﻿using CodeBase.Infrastructure.ServiceLocator;
 using UnityEngine;
 
 namespace CodeBase.Services.Factories
 {
     public interface IPrefabFactory : IService
     {
-        PlayerServer CreatePlayer(Vector3 at);
+        GameObject CreatePlayer(PlayerServerData data, Vector3 at);
     }
 }

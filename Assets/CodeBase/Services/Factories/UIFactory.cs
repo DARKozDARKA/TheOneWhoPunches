@@ -1,4 +1,4 @@
-﻿using CodeBase.Infrastructure;
+﻿using CodeBase.Infrastructure.ServiceLocator;
 using CodeBase.Networking;
 using CodeBase.Services.AssetManagement;
 using CodeBase.Services.Lobby;
