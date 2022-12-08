@@ -10,6 +10,6 @@ namespace CodeBase.Infrastructure.GameRunner
         public readonly GameStateMachine StateMachine;
 
         public Game(ICoroutineRunner coroutineRunner, GameNetworkManager networkManager) => 
-            StateMachine = new GameStateMachine(new SceneLoader(coroutineRunner), AllServices.Container, networkManager);
+            StateMachine = new GameStateMachine(new SceneLoader(coroutineRunner), new AllServices().Container, networkManager);
     }
 }

@@ -1,6 +1,7 @@
 ﻿using CodeBase.Infrastructure.ServiceLocator;
 using CodeBase.Networking;
 using CodeBase.Services.AssetManagement;
+using CodeBase.Services.InputHandler;
 using CodeBase.Services.Lobby;
 using CodeBase.StaticData.Strings;
 using CodeBase.Tools;
@@ -39,6 +40,11 @@ namespace CodeBase.Services.Factories
                 .GetComponent<EndScreenUI>()
                 .With(_ => _.Construct(winnerName));
 
-
+        public GameObject CreateHUD() =>
+            Object.Instantiate(_assetProvider.Load<GameObject>(PrefabsPath.HUD))
+                .With(_ => _.GetComponent<BasicHud>()
+                    .With(_ => _.Construct(
+                        _allServices.Single<GameNetworkManager>(),
+                        _allServices.Single<IInputService>())));
     }
 }

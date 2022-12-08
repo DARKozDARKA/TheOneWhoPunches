@@ -8,6 +8,7 @@ using CodeBase.Infrastructure.States.Lobby;
 using CodeBase.Networking;
 using CodeBase.Services.ConnectionsHandlerService;
 using CodeBase.Services.Factories;
+using CodeBase.Services.Injection;
 using CodeBase.Services.Lobby;
 using CodeBase.Services.Mouse;
 using CodeBase.Services.SceneLoader;
@@ -35,7 +36,7 @@ namespace CodeBase.Infrastructure
                     new GameLoopState(this, sceneLoader, networkManager, services.Single<IPrefabFactory>(),
                         services.Single<IStaticDataProvider>(), services.Single<IMouseService>(),
                         services.Single<IUserDataProvider>(), services.Single<IUIFactory>(),
-                        services.Single<ConnectionsHandler>())
+                        services.Single<ConnectionsHandler>(), services.Single<Injector>())
             };
         }
 

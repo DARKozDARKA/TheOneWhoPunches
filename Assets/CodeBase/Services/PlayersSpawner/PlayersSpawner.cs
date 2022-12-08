@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using CodeBase.CameraScripts;
-using CodeBase.Characters.Player;
 using CodeBase.Characters.Player.Logic;
 using CodeBase.Characters.Player.Presenter;
 using CodeBase.Infrastructure.ServiceLocator;
@@ -9,9 +8,9 @@ using CodeBase.Infrastructure.States.GameLoop;
 using CodeBase.Networking.Messages;
 using CodeBase.Services.ConnectionsHandlerService;
 using CodeBase.Services.Factories;
+using CodeBase.Services.Injection;
 using CodeBase.Services.InputHandler;
 using CodeBase.Services.StaticData;
-using CodeBase.StaticData.ScriptableObjects;
 using Mirror;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -24,6 +23,7 @@ namespace CodeBase.Services.PlayersSpawner
         private readonly IPrefabFactory _prefabFactory;
         private readonly IStaticDataProvider _staticDataProvider;
         private readonly ConnectionsHandler _connectionsHandler;
+        private readonly Injector _injector;
         private readonly PlayerGateaway _playerGateaway;
 
         private Vector3[] _allSpawnPoints;
@@ -31,11 +31,13 @@ namespace CodeBase.Services.PlayersSpawner
         private Dictionary<int, GameObject> _players = new();
 
 
-        public PlayersSpawner(IPrefabFactory prefabFactory, IStaticDataProvider staticDataProvider, PlayersScore playersScore, ConnectionsHandler connectionsHandler)
+        public PlayersSpawner(IPrefabFactory prefabFactory, IStaticDataProvider staticDataProvider,
+            PlayersScore playersScore, ConnectionsHandler connectionsHandler, Injector injector)
         {
             _prefabFactory = prefabFactory;
             _staticDataProvider = staticDataProvider;
             _connectionsHandler = connectionsHandler;
+            _injector = injector;
             _playerGateaway = new PlayerGateaway(playersScore);
         }
 
@@ -58,10 +60,12 @@ namespace CodeBase.Services.PlayersSpawner
 
         public void ConstructPlayerOnClient(SendToClientNewPlayer message)
         {
-            Camera camera = Camera.main;
-        
+            GameObject camera = Camera.main.gameObject;
+
+            _injector.InjectIntoCamera(camera);
+            _injector.InjectIntoPlayer(player: message.PlayerObject, camera: camera);
+            
             camera.GetComponent<CameraFollower>().SetTarget(message.PlayerObject.gameObject);
-            message.PlayerObject.GetComponent<PlayerMover>().Construct(camera.gameObject, AllServices.Container.Single<IInputService>());
         }
 
         public void DestroyAllPlayers()

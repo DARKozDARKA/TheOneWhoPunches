@@ -28,18 +28,16 @@ namespace CodeBase.Characters.Player.Logic
 
         public bool IsDashing => _isDashing;
 
-        private void Awake()
-        {
-            Construct(AllServices.Container.Single<IInputService>());
-        }
-
-        private void Construct(IInputService inputService)
+        public void Construct(IInputService inputService)
         {
             _inputService = inputService;
         }
     
         private void Update()
         {
+            if (isLocalPlayer == false)
+                return;
+            
             if (_inputService.GetLMBDown() && CanStartDash() && _playerMover.HasSpeed())
                 StartDash();
 

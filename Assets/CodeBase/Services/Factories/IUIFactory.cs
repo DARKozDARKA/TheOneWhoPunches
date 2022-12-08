@@ -9,5 +9,6 @@ namespace CodeBase.Services.Factories
         GameObject CreateUIRoot();
         LobbySelectorUI CreateLobbySelector();
         EndScreenUI CreateEndScreen(string winnerName);
+        GameObject CreateHUD();
     }
 }

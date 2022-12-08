@@ -1,4 +1,3 @@
-using CodeBase.Infrastructure.ServiceLocator;
 using CodeBase.Services.InputHandler;
 using Mirror;
 using UnityEngine;
@@ -21,10 +20,10 @@ namespace CodeBase.Networking
         private NetworkManager _manager;
         private IInputService _inputService;
 
-        private void Awake()
+        public void Construct(GameNetworkManager gameNetworkManager, IInputService inputService)
         {
-            _manager = AllServices.Container.Single<GameNetworkManager>();
-            _inputService = AllServices.Container.Single<IInputService>();
+            _manager = gameNetworkManager;
+            _inputService = inputService;
         }
 
         private void OnGUI()

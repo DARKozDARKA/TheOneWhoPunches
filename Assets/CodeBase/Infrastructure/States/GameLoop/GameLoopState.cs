@@ -4,6 +4,7 @@ using CodeBase.Networking;
 using CodeBase.Networking.Messages;
 using CodeBase.Services.ConnectionsHandlerService;
 using CodeBase.Services.Factories;
+using CodeBase.Services.Injection;
 using CodeBase.Services.Mouse;
 using CodeBase.Services.PlayersSpawner;
 using CodeBase.Services.SceneLoader;
@@ -23,11 +24,11 @@ namespace CodeBase.Infrastructure.States.GameLoop
         private readonly IUIFactory _uiFactory;
         private readonly SceneLoader _sceneLoader;
         private readonly GameStateMachine _stateMachine;
-        
+
         private readonly IPlayersSpawner _playersSpawner;
         private readonly PlayersScore _playersScore;
 
-        
+
         private GameObject _endScreenUI;
         private readonly PlayerDataStorage _playerDataStorage;
         private readonly MatchPlayer _matchPlayer;
@@ -35,7 +36,8 @@ namespace CodeBase.Infrastructure.States.GameLoop
 
         public GameLoopState(GameStateMachine stateMachine, SceneLoader sceneLoader,
             GameNetworkManager gameNetworkManager, IPrefabFactory prefabFactory, IStaticDataProvider staticDataProvider,
-            IMouseService mouseService, IUserDataProvider userDataProvider, IUIFactory uiFactory, ConnectionsHandler connectionsHandler)
+            IMouseService mouseService, IUserDataProvider userDataProvider, IUIFactory uiFactory,
+            ConnectionsHandler connectionsHandler, Injector injector)
         {
             _stateMachine = stateMachine;
             _sceneLoader = sceneLoader;
@@ -45,7 +47,7 @@ namespace CodeBase.Infrastructure.States.GameLoop
             _uiFactory = uiFactory;
 
             _playersScore = new PlayersScore();
-            _playersSpawner = new PlayersSpawner(prefabFactory, staticDataProvider, _playersScore, connectionsHandler);
+            _playersSpawner = new PlayersSpawner(prefabFactory, staticDataProvider, _playersScore, connectionsHandler, injector);
             _playerDataStorage = new PlayerDataStorage();
             _matchPlayer = new MatchPlayer(_gameNetworkManager, _playersSpawner, _playersScore, _playerDataStorage);
         }
@@ -57,7 +59,7 @@ namespace CodeBase.Infrastructure.States.GameLoop
             _sceneLoader.Load(SceneNames.Main, OnLoaded);
         }
 
-        public void Exit() => 
+        public void Exit() =>
             UnregisterListeners();
 
         private void RegisterListeners()
@@ -83,10 +85,12 @@ namespace CodeBase.Infrastructure.States.GameLoop
         private void OnLoaded()
         {
             _playersSpawner.LoadLevelPoints();
+            _uiFactory.CreateHUD();
             SendToServerSpawnRequest();
         }
-        
-        private void HandleOnServerPlayerSpawnRequest(NetworkConnectionToClient conn, RequestToServerSpawnPlayer message)
+
+        private void HandleOnServerPlayerSpawnRequest(NetworkConnectionToClient conn,
+            RequestToServerSpawnPlayer message)
         {
             PlayerServerData playerData = CreatePlayerServerData(conn, message);
             _matchPlayer.SpawnPlayerOnServer(conn, playerData);
@@ -101,13 +105,14 @@ namespace CodeBase.Infrastructure.States.GameLoop
         private void DestroyEndScreen() =>
             Object.Destroy(_endScreenUI);
 
-        private void DisconnectFromGame() => 
+        private void DisconnectFromGame() =>
             _stateMachine.Enter<LobbyState>();
 
         private void SendToServerSpawnRequest() =>
             NetworkClient.Send(new RequestToServerSpawnPlayer { PlayerName = _userDataProvider.UserData.PlayerName });
-     
-        private PlayerServerData CreatePlayerServerData(NetworkConnectionToClient conn, RequestToServerSpawnPlayer message) =>
+
+        private PlayerServerData CreatePlayerServerData(NetworkConnectionToClient conn,
+            RequestToServerSpawnPlayer message) =>
             new PlayerServerData()
             {
                 ID = conn.connectionId,
@@ -119,6 +124,5 @@ namespace CodeBase.Infrastructure.States.GameLoop
             _matchPlayer.RemovePlayer(conn);
             _playersSpawner.RemovePlayer(conn);
         }
-        
     }
 }

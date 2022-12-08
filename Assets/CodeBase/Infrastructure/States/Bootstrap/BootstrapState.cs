@@ -6,6 +6,7 @@ using CodeBase.Services.ApplicationRunner;
 using CodeBase.Services.AssetManagement;
 using CodeBase.Services.ConnectionsHandlerService;
 using CodeBase.Services.Factories;
+using CodeBase.Services.Injection;
 using CodeBase.Services.InputHandler;
 using CodeBase.Services.Lobby;
 using CodeBase.Services.Mouse;
@@ -53,6 +54,7 @@ namespace CodeBase.Infrastructure.States.Bootstrap
 
         private void RegisterUtilities()
         {
+            _services.RegisterSingle(new Injector(_services));
             _services.RegisterSingle(_networkManager);
             _services.RegisterSingle<IUserDataProvider>(new UserDataProvider());
             _services.RegisterSingle<IAssetProvider>(new AssetProvider());

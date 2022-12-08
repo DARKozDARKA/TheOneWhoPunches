@@ -12,8 +12,8 @@ namespace CodeBase.UI
 
         private IApplicationRunner _applicationRunner;
 
-        private void Awake() =>
-            _applicationRunner = AllServices.Container.Single<IApplicationRunner>();
+        public void Construct(IApplicationRunner applicationRunner) =>
+            _applicationRunner = applicationRunner;
 
         private void OnEnable() => 
             _button.onClick.AddListener(Leave);

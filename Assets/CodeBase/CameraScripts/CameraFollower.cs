@@ -20,9 +20,9 @@ namespace CodeBase.CameraScripts
         private Quaternion _cameraRotation;
         private float _distanceBetweenCameraAndTarget;
 
-        private void Awake()
+        public void Construct(IInputService inputService)
         {
-            _inputService = AllServices.Container.Single<IInputService>();
+            _inputService = inputService;
         }
 
         private void Update()
