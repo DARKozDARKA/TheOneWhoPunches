@@ -11,5 +11,7 @@ namespace CodeBase.Services.PlayersSpawner
         void LoadLevelPoints();
         void DestroyAllPlayers();
         void RemovePlayer(NetworkConnectionToClient conn);
+        void RegisterListeners();
+        void UnregisterListeners();
     }
 }

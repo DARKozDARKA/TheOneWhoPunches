@@ -1,15 +1,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using CodeBase.CameraScripts;
-using CodeBase.Characters.Player.Logic;
 using CodeBase.Characters.Player.Presenter;
-using CodeBase.Infrastructure.ServiceLocator;
 using CodeBase.Infrastructure.States.GameLoop;
 using CodeBase.Networking.Messages;
 using CodeBase.Services.ConnectionsHandlerService;
 using CodeBase.Services.Factories;
 using CodeBase.Services.Injection;
-using CodeBase.Services.InputHandler;
 using CodeBase.Services.StaticData;
 using Mirror;
 using UnityEngine;
@@ -39,6 +36,16 @@ namespace CodeBase.Services.PlayersSpawner
             _connectionsHandler = connectionsHandler;
             _injector = injector;
             _playerGateaway = new PlayerGateaway(playersScore);
+        }
+
+        public void RegisterListeners()
+        {
+            NetworkClient.RegisterHandler<SendToClientNewPlayer>(ConstructPlayerOnClient);
+        }
+        
+        public void UnregisterListeners()
+        {
+            NetworkClient.UnregisterHandler<SendToClientNewPlayer>();
         }
 
         public void LoadLevelPoints()

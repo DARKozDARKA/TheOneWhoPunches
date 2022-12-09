@@ -1,5 +1,4 @@
-﻿using CodeBase.Characters.Player;
-using Mirror;
+﻿using Mirror;
 using UnityEngine;
 
 namespace CodeBase.Networking.Messages

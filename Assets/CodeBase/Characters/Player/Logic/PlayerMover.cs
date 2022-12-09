@@ -43,13 +43,11 @@ namespace CodeBase.Characters.Player.Logic
             if (_gravityIsEnabled)
                 ApplyGravity();
 
-            _characterController.Move(_direction * (Time.deltaTime * _speed * _speedMultiplier));
+            MoveCharacter();
         }
 
-        public void LoadPlayerData(PlayerData playerData)
-        {
+        public void LoadPlayerData(PlayerData playerData) => 
             _speed = playerData.Speed;
-        }
 
         public bool HasSpeed() =>
             _direction.magnitude >= GameConstants.PlayerHasSpeedValue;
@@ -65,12 +63,15 @@ namespace CodeBase.Characters.Player.Logic
 
         public void EnableGravity() => 
             _gravityIsEnabled = true;
-        
+
         public void DisableControl() => 
             _isDirectrlyControlled = false;
 
         public void EnableControl() => 
             _isDirectrlyControlled = true;
+
+        private void MoveCharacter() => 
+            _characterController.Move(_direction * (Time.deltaTime * _speed * _speedMultiplier));
 
         private void CalculateMovementDirection()
         {

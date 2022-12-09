@@ -30,8 +30,7 @@ namespace CodeBase.CameraScripts
             if (_isTargetSet == false)
                 return;
 
-            _rotationX += _inputService.GetMouseX() * GameConstants.MouseRotateSpeed;
-            _rotationY += -_inputService.GetMouseY() * GameConstants.MouseRotateSpeed;
+            GetRotationsFromInput();
 
             MathTool.LimitValueInBoundries(
                 value: ref _rotationY,
@@ -44,15 +43,37 @@ namespace CodeBase.CameraScripts
             if (_target == null)
                 return;
 
-            var direction = new Vector3(0, 0, -_distanceBetweenCameraAndTarget);
-            Quaternion rotation = Quaternion.Euler(_rotationY, _rotationX, 0);
-
-            _cameraRotation = Quaternion.Slerp(_cameraRotation, rotation, GameConstants.SlerpValue);
+            Vector3 direction = CalculateDirection();
+            _cameraRotation = CalculateCameraRotation();
 
             Vector3 targetPosition = _target.transform.position;
 
+            ApplyTransform(targetPosition, direction);
+        }
+
+        private void ApplyTransform(Vector3 targetPosition, Vector3 direction)
+        {
             transform.position = targetPosition + _cameraRotation * direction;
             transform.LookAt(targetPosition);
+        }
+
+        private Quaternion CalculateCameraRotation()
+        {
+            Quaternion rotation = Quaternion.Euler(_rotationY, _rotationX, 0);
+
+            return Quaternion.Slerp(_cameraRotation, rotation, GameConstants.SlerpValue);
+        }
+
+        private Vector3 CalculateDirection()
+        {
+            var direction = new Vector3(0, 0, -_distanceBetweenCameraAndTarget);
+            return direction;
+        }
+
+        private void GetRotationsFromInput()
+        {
+            _rotationX += _inputService.GetMouseX() * GameConstants.MouseRotateSpeed;
+            _rotationY += -_inputService.GetMouseY() * GameConstants.MouseRotateSpeed;
         }
 
         public void SetTarget(GameObject target)

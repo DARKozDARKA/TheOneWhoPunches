@@ -65,21 +65,21 @@ namespace CodeBase.Infrastructure.States.GameLoop
         private void RegisterListeners()
         {
             NetworkServer.RegisterHandler<RequestToServerSpawnPlayer>(HandleOnServerPlayerSpawnRequest);
-            NetworkClient.RegisterHandler<SendToClientNewPlayer>(_playersSpawner.ConstructPlayerOnClient);
             NetworkClient.RegisterHandler<SendToClientsGameEnd>(ShowGameEndScreen);
             NetworkClient.RegisterHandler<SendToClientsNewGame>(HandleNewGameOnClient);
             _gameNetworkManager.OnClientStop += DisconnectFromGame;
             _gameNetworkManager.OnServerDisconnected += RemovePlayer;
+            _playersSpawner.RegisterListeners();
         }
 
         private void UnregisterListeners()
         {
             NetworkServer.UnregisterHandler<RequestToServerSpawnPlayer>();
-            NetworkClient.UnregisterHandler<SendToClientNewPlayer>();
             NetworkClient.UnregisterHandler<SendToClientsGameEnd>();
             NetworkClient.UnregisterHandler<SendToClientsNewGame>();
             _gameNetworkManager.OnClientStop -= DisconnectFromGame;
             _gameNetworkManager.OnServerDisconnected -= RemovePlayer;
+            _playersSpawner.UnregisterListeners();
         }
 
         private void OnLoaded()

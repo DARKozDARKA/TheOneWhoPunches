@@ -43,9 +43,9 @@ namespace CodeBase.Infrastructure.States.Lobby
 
         private void OnLoaded()
         {
+            RegisterListeners();
             _uiFactory.CreateUIRoot();
             CreateLobby();
-            RegisterListeners();
             _lobby.CreateLobbySelector();
         }
 
