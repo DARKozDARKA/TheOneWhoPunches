@@ -1,4 +1,6 @@
 using CodeBase.Characters.Player.Presenter;
+using CodeBase.Messenger;
+using CodeBase.Messenger.Messages;
 using Mirror;
 using UnityEngine;
 
@@ -70,7 +72,7 @@ namespace CodeBase.Characters.Player.Logic
             _hittedOnAttack = true;
             _playerMessenger.SendToServerPlayerAttack(otherMessenger, _playerPresenter.GetPlayerID());
         }
-    
+
         private void StopAttack()
         {
             _hittedOnAttack = false;
@@ -78,5 +80,7 @@ namespace CodeBase.Characters.Player.Logic
 
         private bool ThisPlayerCanAttack() => 
             _playerDash.IsDashing && _hittedOnAttack == false;
+
+
     }
 }

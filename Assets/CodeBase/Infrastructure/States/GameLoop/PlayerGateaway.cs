@@ -1,27 +1,25 @@
-using CodeBase.Characters.Player.Logic;
-using CodeBase.Characters.Player.Presenter;
+using System;
+using System.Collections.Generic;
+using CodeBase.Messenger;
 
 namespace CodeBase.Infrastructure.States.GameLoop
 {
     public class PlayerGateaway
     {
-        private readonly PlayersScore _playersScore;
-
-        public PlayerGateaway(PlayersScore playerScore)
+        private Dictionary<Type, Action<ToServerMessage>> _actions = new();
+        
+        public void HandleMessage<T>(T message) where T : ToServerMessage
         {
-            _playersScore = playerScore;
+            if (_actions.ContainsKey(typeof(T)) == false)
+                throw new Exception($"No listeners for message {typeof(T)}");
+            
+            _actions[typeof(T)]?.Invoke(message);
         }
-
-        public void AddPlayer(PlayerMessenger playerMessenger, int ID)
+        
+        public void RegisterToMessage<T>(Action<ToServerMessage> action) where T : ToServerMessage
         {
-            playerMessenger.OnServerPlayerAttack += SetAttack;
-        }
-
-        private void SetAttack(PlayerAttackData data)
-        {
-            _playersScore.ScorePlayer(data.AttackerPlayerID);
-            data.Attacker.SendToClientScoreChanged(_playersScore.GetPlayerScore(data.AttackerPlayerID));
-            data.Victim.SendToClientWasAttacked();
+            if (_actions.ContainsKey(typeof(T)) == false)
+                _actions.Add(typeof(T), action);
         }
     }
 }

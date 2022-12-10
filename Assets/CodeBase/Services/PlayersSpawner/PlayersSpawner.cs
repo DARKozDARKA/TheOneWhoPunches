@@ -29,13 +29,13 @@ namespace CodeBase.Services.PlayersSpawner
 
 
         public PlayersSpawner(IPrefabFactory prefabFactory, IStaticDataProvider staticDataProvider,
-            PlayersScore playersScore, ConnectionsHandler connectionsHandler, Injector injector)
+            ConnectionsHandler connectionsHandler, Injector injector, PlayerGateaway playerGateaway)
         {
             _prefabFactory = prefabFactory;
             _staticDataProvider = staticDataProvider;
             _connectionsHandler = connectionsHandler;
             _injector = injector;
-            _playerGateaway = new PlayerGateaway(playersScore);
+            _playerGateaway = playerGateaway;
         }
 
         public void RegisterListeners()
@@ -62,9 +62,6 @@ namespace CodeBase.Services.PlayersSpawner
             conn.Send(new SendToClientNewPlayer(player));
         }
 
-        public void RemovePlayer(NetworkConnectionToClient conn) =>
-            _players.Remove(conn.connectionId);
-
         public void ConstructPlayerOnClient(SendToClientNewPlayer message)
         {
             GameObject camera = Camera.main.gameObject;
@@ -74,6 +71,9 @@ namespace CodeBase.Services.PlayersSpawner
             
             camera.GetComponent<CameraFollower>().SetTarget(message.PlayerObject.gameObject);
         }
+
+        public void RemovePlayer(NetworkConnectionToClient conn) =>
+            _players.Remove(conn.connectionId);
 
         public void DestroyAllPlayers()
         {
@@ -91,7 +91,7 @@ namespace CodeBase.Services.PlayersSpawner
                 Name = playerName
             };
             GameObject player = _prefabFactory.CreatePlayer(playerServerData, GetRandomPoint());
-            _playerGateaway.AddPlayer(player.GetComponent<PlayerMessenger>(), conn.connectionId);
+            player.GetComponent<PlayerMessenger>().Construct(_playerGateaway);
             _players.Add(conn.connectionId, player.gameObject);
             return player;
         }

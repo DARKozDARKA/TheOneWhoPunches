@@ -25,13 +25,13 @@ namespace CodeBase.Infrastructure.States.GameLoop
         private readonly SceneLoader _sceneLoader;
         private readonly GameStateMachine _stateMachine;
 
-        private readonly IPlayersSpawner _playersSpawner;
-        private readonly PlayersScore _playersScore;
+        private IPlayersSpawner _playersSpawner;
+        private PlayersScore _playersScore;
 
 
         private GameObject _endScreenUI;
-        private readonly PlayerDataStorage _playerDataStorage;
-        private readonly MatchPlayer _matchPlayer;
+        private PlayerDataStorage _playerDataStorage;
+        private MatchPlayer _matchPlayer;
 
 
         public GameLoopState(GameStateMachine stateMachine, SceneLoader sceneLoader,
@@ -46,10 +46,7 @@ namespace CodeBase.Infrastructure.States.GameLoop
             _userDataProvider = userDataProvider;
             _uiFactory = uiFactory;
 
-            _playersScore = new PlayersScore();
-            _playersSpawner = new PlayersSpawner(prefabFactory, staticDataProvider, _playersScore, connectionsHandler, injector);
-            _playerDataStorage = new PlayerDataStorage();
-            _matchPlayer = new MatchPlayer(_gameNetworkManager, _playersSpawner, _playersScore, _playerDataStorage);
+            CreateLogicHandlers(prefabFactory, staticDataProvider, connectionsHandler, injector);
         }
 
         public void Enter()
@@ -89,8 +86,7 @@ namespace CodeBase.Infrastructure.States.GameLoop
             SendToServerSpawnRequest();
         }
 
-        private void HandleOnServerPlayerSpawnRequest(NetworkConnectionToClient conn,
-            RequestToServerSpawnPlayer message)
+        private void HandleOnServerPlayerSpawnRequest(NetworkConnectionToClient conn, RequestToServerSpawnPlayer message)
         {
             PlayerServerData playerData = CreatePlayerServerData(conn, message);
             _matchPlayer.SpawnPlayerOnServer(conn, playerData);
@@ -123,6 +119,17 @@ namespace CodeBase.Infrastructure.States.GameLoop
         {
             _matchPlayer.RemovePlayer(conn);
             _playersSpawner.RemovePlayer(conn);
+        }
+
+        private void CreateLogicHandlers(IPrefabFactory prefabFactory, IStaticDataProvider staticDataProvider,
+            ConnectionsHandler connectionsHandler, Injector injector)
+        {
+            _playersScore = new PlayersScore();
+            PlayerGateaway playerGateaway = new PlayerGateaway();
+            new AttackValidator(playerGateaway, _playersScore);
+            _playersSpawner = new PlayersSpawner(prefabFactory, staticDataProvider, connectionsHandler, injector, playerGateaway);
+            _playerDataStorage = new PlayerDataStorage();
+            _matchPlayer = new MatchPlayer(_gameNetworkManager, _playersSpawner, _playersScore, _playerDataStorage);
         }
     }
 }
